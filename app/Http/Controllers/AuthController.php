@@ -98,17 +98,67 @@ class AuthController extends Controller
         return response()->json($response);
     }
 
-      public function logout(Request $request)
+      public function Studentlogout(Request $request)
     {
         // Assuming you receive the token to delete in the request
         
-        $response = $this->sendHttpRequest('POST', "$this->ServiceUrl/logout", $request->bearerToken());
+        $response = $this->sendHttpRequest('POST', "$this->ServiceUrl/student/logout", $request->bearerToken());
         if($response['status'] == 200){
             $this->deleteToken($request->bearerToken());
         }
         return response()->json($response);
        
     }
+
+      public function Teacherlogout(Request $request)
+    {
+        // Assuming you receive the token to delete in the request
+        
+        $response = $this->sendHttpRequest('POST', "$this->ServiceUrl/teacher/logout", $request->bearerToken());
+        if($response['status'] == 200){
+            $this->deleteToken($request->bearerToken());
+        }
+        return response()->json($response);
+       
+    }
+
+      public function Stafflogout(Request $request)
+    {
+        // Assuming you receive the token to delete in the request
+        
+        $response = $this->sendHttpRequest('POST', "$this->ServiceUrl/staff/logout", $request->bearerToken());
+        if($response['status'] == 200){
+            $this->deleteToken($request->bearerToken());
+        }
+        return response()->json($response);
+       
+    }
+
+      public function Adminlogout(Request $request)
+    {
+        // Assuming you receive the token to delete in the request
+        
+        $response = $this->sendHttpRequest('POST', "$this->ServiceUrl/admin/logout", $request->bearerToken());
+        if($response['status'] == 200){
+            $this->deleteToken($request->bearerToken());
+        }
+        return response()->json($response);
+       
+    }
+
+      public function SupedAdminlogout(Request $request)
+    {
+        // Assuming you receive the token to delete in the request
+        
+        $response = $this->sendHttpRequest('POST', "$this->ServiceUrl/super-admin/logout", $request->bearerToken());
+        if($response['status'] == 200){
+            $this->deleteToken($request->bearerToken());
+        }
+        return response()->json($response);
+       
+    }
+
+   
 
     private function callAuthService($data,$tag)
     {
