@@ -1,0 +1,62 @@
+version: '3.8'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: api_getway
+    container_name: api_getway
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - .:/var/www
+      - ./vendor:/var/www/vendor
+      - ./storage:/var/www/storage
+    networks:
+      - api_getway
+
+  webserver:
+    image: nginx:alpine
+    container_name: nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - .:/var/www
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    networks:
+      - api_getway
+
+  db:
+    image: mysql:5.7
+    container_name: mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rfA4@X5cXPw*eqCduTE
+      MYSQL_DATABASE: api_getway
+      MYSQL_USER: root
+      MYSQL_PASSWORD: rfA4@X5cXPw*eqCduT
+    ports:
+      - "3306:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - api_getway
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: rfA4@X5cXPw*eqCduTE
+    ports:
+      - "8080:80"
+    networks:
+      - api_getway
+
+networks:
+  api_getway:
+
+volumes:
+  dbdata:
