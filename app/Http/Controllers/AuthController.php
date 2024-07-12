@@ -25,6 +25,15 @@ class AuthController extends Controller
     {
         // Call auth-service to authenticate user and obtain access token
         // Example: Assuming the token is returned in the response data
+        $clientKey = $request->header('CLIENT_KEY');
+
+        if ($clientKey !== $this->apiKey) {
+            return response()->json([
+                'status' => 401,
+                'message' => 'Unauthorized. Invalid API key.',
+            ], 401);
+        }
+
         $tag = 'students-login';
         $response = $this->callAuthService($request->all(),$tag);
         
@@ -101,6 +110,14 @@ class AuthController extends Controller
       public function Studentlogout(Request $request)
     {
         // Assuming you receive the token to delete in the request
+         $clientKey = $request->header('CLIENT_KEY');
+
+        if ($clientKey !== $this->apiKey) {
+            return response()->json([
+                'status' => 401,
+                'message' => 'Unauthorized. Invalid API key.',
+            ], 401);
+        }
         
         $response = $this->sendHttpRequest('POST', "$this->ServiceUrl/student/logout", $request->bearerToken());
         if($response['status'] == 200){
@@ -193,5 +210,38 @@ class AuthController extends Controller
         // Delete the token from your database
         AuthToken::where('access_token', $accessToken)->delete();
 
+    }
+
+
+
+    //check auth token
+    public function checkAuthStudent(Request $request)
+    {
+        $response = $this->sendHttpRequest('GET', "$this->ServiceUrl/student/check-auth", $request->bearerToken());
+        return response()->json($response);
+    }
+
+    public function checkAuthTeacher(Request $request)
+    {
+        $response = $this->sendHttpRequest('GET', "$this->ServiceUrl/teacher/check-auth", $request->bearerToken());
+        return response()->json($response);
+    }
+
+    public function checkAuthStaff(Request $request)
+    {
+        $response = $this->sendHttpRequest('GET', "$this->ServiceUrl/staff/check-auth", $request->bearerToken());
+        return response()->json($response);
+    }
+
+    public function checkAuthAdmin(Request $request)
+    {
+        $response = $this->sendHttpRequest('GET', "$this->ServiceUrl/admin/check-auth", $request->bearerToken());
+        return response()->json($response);
+    }
+
+    public function checkAuthSuperAdmin(Request $request)
+    {
+        $response = $this->sendHttpRequest('GET', "$this->ServiceUrl/super-admin/check-auth", $request->bearerToken());
+        return response()->json($response);
     }
 }
