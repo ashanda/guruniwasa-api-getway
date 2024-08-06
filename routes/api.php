@@ -32,9 +32,15 @@ $router->group(['middleware' => 'auth.token'], function () use ($router) {
     $router->get('admin-check-auth', 'AuthController@checkAuthAdmin');
     $router->get('superadmin-check-auth', 'AuthController@checkAuthSuperAdmin');
 
-    
+    $router->get('live-lessons', 'LessonController@liveLessons');
 });
 
 //Common Endpoints
     $router->get('grades', 'GradeController@index');
     $router->get('subjects', 'SubjectController@index');
+    $router->post('send-otp', 'SmsController@sendOtp');
+    $router->post('register-student', 'AuthController@Studentregister');
+
+$router->options('/{any:.*}', function () {
+    return response('OK', 200);
+});

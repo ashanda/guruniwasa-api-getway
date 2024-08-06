@@ -5,21 +5,27 @@ namespace App\Http\Controllers;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 
-class SubjectController extends Controller
+class SmsController extends Controller
 {
-        private $ServiceUrl;
-        private $apiKey;
+
+    private $ServiceUrl;
+    private $apiKey;
 
     public function __construct()
     {
         $this->ServiceUrl = env('CORE_SERVICE'); // Assign the environment variable to the property
         $this->apiKey = env('API_KEY');
-    }    
-    public function index(Request $request)
-    {
-         $response = $this->callService($request->all());
-         return response()->json($response);
     }
+    //Send Otp
+    public function sendOtp(Request $request)
+    { 
+         
+        $response = $this->callService($request->all());
+       
+        return response()->json($response);
+
+    }
+
 
 
     private function callService($data)
@@ -27,16 +33,16 @@ class SubjectController extends Controller
         // Make a request to auth-service to authenticate and get token
        
         $http = new Client();
-        $response = $http->get("$this->ServiceUrl/subjects", [
+        $response = $http->post("$this->ServiceUrl/send-otp", [
                 'headers' => [
                     'API-Key' => $this->apiKey,
                 ],
-                'query' => [
-                        'grade' => $data['gid'],
-                        'classType'=> $data['classType'],
+                'form_params' => [
+                        'phone' => $data['phone'],
                 ],
         ]);
        
         return json_decode((string) $response->getBody(), true);
     }
+
 }
