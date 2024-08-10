@@ -309,4 +309,6 @@ class AuthController extends Controller
         $response = $this->sendHttpRequest('GET', "$this->ServiceUrl/super-admin/check-auth", $request->bearerToken());
         return response()->json($response);
     }
+
+    
 }
