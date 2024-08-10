@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
-
+namespace App\Http\Controllers\Globle;
+use App\Http\Controllers\Controller;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 
-class GradeController extends Controller
+class SubjectController extends Controller
 {
         private $ServiceUrl;
         private $apiKey;
@@ -27,10 +27,14 @@ class GradeController extends Controller
         // Make a request to auth-service to authenticate and get token
        
         $http = new Client();
-        $response = $http->get("$this->ServiceUrl/grades", [
+        $response = $http->get("$this->ServiceUrl/subjects", [
                 'headers' => [
                     'API-Key' => $this->apiKey,
-                ]
+                ],
+                'query' => [
+                        'grade' => $data['gid'],
+                        'classType'=> $data['classType'],
+                ],
         ]);
        
         return json_decode((string) $response->getBody(), true);
