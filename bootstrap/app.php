@@ -78,6 +78,7 @@ $app->middleware([
 
  $app->routeMiddleware([
        'auth.token' => App\Http\Middleware\AuthTokenMiddleware::class,
+      'auth.role' => App\Http\Middleware\CheckAuthRole::class,
 ]);
 
 
