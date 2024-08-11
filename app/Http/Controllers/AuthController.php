@@ -29,7 +29,7 @@ class AuthController extends Controller
     {
         // Call auth-service to authenticate user and obtain access token
         // Example: Assuming the token is returned in the response data
-        $clientKey = $request->header('CLIENT_KEY');
+        $clientKey = $request->header('CLIENT-KEY');
 
         if ($clientKey !== $this->apiKey) {
             return response()->json([
@@ -114,7 +114,7 @@ class AuthController extends Controller
       public function Studentlogout(Request $request)
     {
         // Assuming you receive the token to delete in the request
-         $clientKey = $request->header('CLIENT_KEY');
+         $clientKey = $request->header('CLIENT-KEY');
 
         if ($clientKey !== $this->apiKey) {
             return response()->json([
