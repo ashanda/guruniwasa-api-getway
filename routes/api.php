@@ -39,6 +39,9 @@ $router->group(['middleware' => 'auth.token'], function () use ($router) {
     //video recordings
     $router->get('video-recordings', 'VideoRecordingController@videoRecordings');
 
+    //Class Tute Books
+    $router->get('class-tute-books', 'ClassTuteController@ClassTuteBooks');
+
     $router->post('get-subject', 'SubjectController@getSubject');
     //Super Admin Endpoints
     //Auth Endpoints
@@ -175,7 +178,7 @@ $router->group(['middleware' => 'auth.role:staff,superadmin,admin', 'namespace' 
    
     $router->get('grades/create', 'GradeController@create'); // GET /grades/create
     $router->post('grades', 'GradeController@store'); // POST /grades
-    $router->get('grades/{grade}', 'GradeController@show'); // GET /grades/{grade}
+    
     $router->get('grades/{grade}/edit', 'GradeController@edit'); // GET /grades/{grade}/edit
     $router->put('grades/{grade}', 'GradeController@update'); // PUT /grades/{grade}
     $router->patch('grades/{grade}', 'GradeController@update'); // PATCH /grades/{grade}
@@ -186,6 +189,32 @@ $router->group(['middleware' => 'auth.role:staff,superadmin,admin', 'namespace' 
     
 });
 
+
+$router->group(['middleware' => 'auth.role:staff,superadmin,admin,teacher'], function () use ($router) {
+   
+     $router->get ('class-tute-teacher', 'ClassTuteController@classTuteTeacher');
+
+     $router->post ('class-tute-store', 'ClassTuteController@classTuteTeacherStore');
+     $router->get ('class-tute-destroy', 'ClassTuteController@classTuteTeacherDestroy');
+
+     $router->get ('teacher-subjects', 'TeacherSubjectController@teacherSubjects');
+     $router->get ('teacher-subjects-count', 'TeacherSubjectController@teacherSubjectsCount');
+     $router->get('subjects{id}', 'Globle\SubjectController@show');
+
+     $router->get ('teacher-class-note', 'ClassNoteController@teacherNoteList');
+     $router->get ('teacher-class-note-store', 'ClassNoteController@teacherNoteStore');
+     $router->get ('teacher-class-note-update', 'ClassNoteController@teacherNoteUpdate');
+     $router->get ('teacher-class-note-destroy', 'ClassNoteController@teacherNoteDestroy');
+
+     $router->get ('pending-class-note', 'ClassNoteController@teacherNotePending');
+     $router->get ('approved-class-note', 'ClassNoteController@teacherNoteApproved');
+
+   
+
+    
+});
+
+
 $router->group(['middleware' => 'auth.role:staff,student,superadmin,admin,teacher'], function () use ($router) {
      $router->post('student-attendence', 'AttendenceController@StudentAttendence');
      //teacher live lesson
@@ -194,6 +223,15 @@ $router->group(['middleware' => 'auth.role:staff,student,superadmin,admin,teache
      $router->post('live-lessons-update', 'LessonController@liveLessonsUpdate');
      $router->get('video-recordings-teacher', 'VideoRecordingController@videoRecordingsTeacher');
      $router->post('video-recordings-update', 'VideoRecordingController@videoRecordingsUpdate');
+
+
+     $router->get('grades/{grade}', 'Globle\GradeController@show'); // GET /grades/{grade}
+
+     $router->get('student-subjects', 'SubjectController@studentSubject');
+
+
+
+
 });
 //Common Endpoints
 $router->get('grades', 'Globle\GradeController@index'); // GET /grades

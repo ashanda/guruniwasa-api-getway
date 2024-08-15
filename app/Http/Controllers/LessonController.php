@@ -84,7 +84,37 @@ class LessonController extends Controller
                 ],
         ]);
        
-        return json_decode((string) $response->getBody(), true);
+        $responseData = json_decode((string) $response->getBody(), true);
+        
+        // Check if the response data is valid
+        if (isset($responseData['data']['lessons'])) {
+        foreach ($responseData['data']['lessons'] as &$record) {
+            $teacherId = $record['teacher_id'];
+            $gradeIDd = $record['grade_id'];
+            // Make a request to get the teacher's name using the teacher ID
+            $responseTeacher = $this->sendHttpRequest('GET', "$this->ServiceUrl/teacher/data/$teacherId", $this->apiKey);
+            $responseGrade = $this->sendHttpRequest('GET', "$this->CoreServiceUrl/grades/$gradeIDd", $this->apiKey);
+            // Assuming sendHttpRequest returns an array, no need to call getBody()
+            // If it already returns decoded JSON data
+            if (isset($responseTeacher['data']['name'])) {
+                // Bind the teacher's name to the video record
+                $record['teacher_name'] = $responseTeacher['data']['name'];
+            } else {
+                // If the name is not found, bind a default value
+                $record['teacher_name'] = 'Unknown';
+            }
+
+            if (isset($responseGrade['data']['gname'])) {
+                // Bind the teacher's name to the video record
+                $record['grade'] = $responseGrade['data']['gname'];
+            } else {
+                // If the name is not found, bind a default value
+                $record['grade'] = 'Unknown';
+            }
+        }
+    }
+
+    return $responseData;
     }
 
 

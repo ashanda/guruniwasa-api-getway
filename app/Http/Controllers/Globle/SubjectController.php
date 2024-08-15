@@ -22,6 +22,17 @@ class SubjectController extends Controller
     }
 
 
+    public function show($id){
+        $http = new Client();
+        $response = $http->get("$this->ServiceUrl/subjects/$id", [
+                'headers' => [
+                    'API-Key' => $this->apiKey,
+                ], 
+        ]);
+       
+        return json_decode((string) $response->getBody(), true);
+    }
+
     private function callService($data)
     {
         // Make a request to auth-service to authenticate and get token
