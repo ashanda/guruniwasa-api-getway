@@ -60,6 +60,7 @@ $app->singleton(
 */
 
 $app->configure('app');
+$app->configure('filesystems');
 
 /*
 |--------------------------------------------------------------------------
@@ -83,6 +84,9 @@ $app->middleware([
 
 
 $app->register(Flipbox\LumenGenerator\LumenGeneratorServiceProvider::class);
+
+$app->register(Illuminate\Filesystem\FilesystemServiceProvider::class);
+
 /*
 |--------------------------------------------------------------------------
 | Register Service Providers
