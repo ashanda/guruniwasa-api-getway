@@ -95,6 +95,7 @@ class AuthController extends Controller
 
         return response()->json($response);
     }
+    
 //SuperAdmin login
     public function SupedAdminlogin(Request $request)
     {

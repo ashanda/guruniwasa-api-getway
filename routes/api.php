@@ -9,7 +9,7 @@ $router->get('users', 'UserController@index');
 //Login Endpoints
 $router->post('students-login', 'AuthController@Studentlogin');
 $router->post('teachers-login', 'AuthController@Teacherlogin');
-$router->post('staff-login', 'AuthController@Stafflogin');
+$router->post('staffs-login', 'AuthController@Stafflogin');
 $router->post('admins-login', 'AuthController@Adminlogin');
 $router->post('super-admins-login', 'AuthController@SupedAdminlogin');
 
@@ -22,7 +22,7 @@ $router->group(['middleware' => 'auth.token'], function () use ($router) {
    //Logout Endpoints
     $router->post('students-logout', 'AuthController@Studentlogout');
     $router->post('teachers-logout', 'AuthController@Teacherlogout');
-    $router->post('staff-logout', 'AuthController@Stafflogout');
+    $router->post('staffs-logout', 'AuthController@Stafflogout');
     $router->post('admins-logout', 'AuthController@Adminlogout');
     
 
@@ -193,9 +193,14 @@ $router->group(['middleware' => 'auth.role:staff,superadmin,admin', 'namespace' 
 $router->group(['middleware' => 'auth.role:staff,superadmin,admin,teacher'], function () use ($router) {
    
      $router->get ('class-tute-teacher', 'ClassTuteController@classTuteTeacher');
-
      $router->post ('class-tute-store', 'ClassTuteController@classTuteTeacherStore');
      $router->get ('class-tute-destroy', 'ClassTuteController@classTuteTeacherDestroy');
+
+
+     $router->get ('class-paper-teacher', 'ClassPaperController@classPaperTeacher');
+     $router->post ('class-paper-store', 'ClassPaperController@classPaperTeacherStore');
+     $router->get ('class-paper-destroy', 'ClassPaperController@classPaperTeacherDestroy');
+
 
      $router->get ('teacher-subjects', 'TeacherSubjectController@teacherSubjects');
      $router->get ('teacher-subjects-count', 'TeacherSubjectController@teacherSubjectsCount');
@@ -228,6 +233,13 @@ $router->group(['middleware' => 'auth.role:staff,student,superadmin,admin,teache
      $router->get('grades/{grade}', 'Globle\GradeController@show'); // GET /grades/{grade}
 
      $router->get('student-subjects', 'SubjectController@studentSubject');
+
+     $router->get('note-paper-list', 'ClassNoteController@studentNoteList');
+     $router->get('note-paper-count', 'ClassNoteController@studentNoteCount');
+     $router->post('note-paper-list', 'ClassNoteController@studentNoteStore');
+     $router->post('class-note-paper-upload', 'ClassNoteController@studentNotePaperUpload');
+
+     $router->get('class-paper', 'ClassPaperController@ClassPaper');
 
 
 
