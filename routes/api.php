@@ -9,7 +9,7 @@ $router->get('users', 'UserController@index');
 //Login Endpoints
 $router->post('students-login', 'AuthController@Studentlogin');
 $router->post('teachers-login', 'AuthController@Teacherlogin');
-$router->post('staff-login', 'AuthController@Stafflogin');
+$router->post('staffs-login', 'AuthController@Stafflogin');
 $router->post('admins-login', 'AuthController@Adminlogin');
 $router->post('super-admins-login', 'AuthController@SupedAdminlogin');
 
@@ -22,7 +22,7 @@ $router->group(['middleware' => 'auth.token'], function () use ($router) {
    //Logout Endpoints
     $router->post('students-logout', 'AuthController@Studentlogout');
     $router->post('teachers-logout', 'AuthController@Teacherlogout');
-    $router->post('staff-logout', 'AuthController@Stafflogout');
+    $router->post('staffs-logout', 'AuthController@Stafflogout');
     $router->post('admins-logout', 'AuthController@Adminlogout');
     
 
