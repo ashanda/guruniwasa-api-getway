@@ -181,7 +181,7 @@ $router->group(['middleware' => 'auth.role:staff,superadmin,admin', 'namespace' 
     
     $router->get('grades/{grade}/edit', 'GradeController@edit'); // GET /grades/{grade}/edit
     $router->put('grades/{grade}', 'GradeController@update'); // PUT /grades/{grade}
-    $router->patch('grades/{grade}', 'GradeController@update'); // PATCH /grades/{grade}
+    //$router->patch('grades/{grade}', 'GradeController@update'); // PATCH /grades/{grade}
     $router->delete('grades/{grade}', 'GradeController@destroy'); // DELETE /grades/{grade}
 
    
@@ -214,14 +214,30 @@ $router->group(['middleware' => 'auth.role:staff,superadmin,admin,teacher'], fun
      $router->get ('pending-class-note', 'ClassNoteController@teacherNotePending');
      $router->get ('approved-class-note', 'ClassNoteController@teacherNoteApproved');
 
+
+     $router->post('register-teacher', 'AuthController@Teacherregister'); 
+
    
 
     
 });
+$router->group(['middleware' => 'auth.role:staff,superadmin,admin'], function () use ($router) {
+$router->get('payment-history', 'PaymentController@StudentPaymentHistory');
 
+$router->get('payment-bank-history', 'PaymentController@StudentBankPaymentHistory');
+
+$router->get('pending-payments', 'PaymentController@StudentpendingPayment');
+$router->get('approved-payments', 'PaymentController@StudentapprovedPayment');
+
+$router->post('approve-payment', 'PaymentController@approvePayment');
+$router->post('reject-payment', 'PaymentController@rejectPayment');
+
+});
 
 $router->group(['middleware' => 'auth.role:staff,student,superadmin,admin,teacher'], function () use ($router) {
-     $router->post('student-attendence', 'AttendenceController@StudentAttendence');
+     $router->post('student-attendence', 'AttendenceController@StudentAttendence'); // qr code
+     $router->post('student-attendances', 'AttendenceController@StudentAttendances');
+     $router->get('student-attendances-data', 'AttendenceController@StudentAttendenceData');
      //teacher live lesson
      $router->get('live-lessons-teacher', 'LessonController@teacherliveLessons');
      $router->get('live-lessons-show', 'LessonController@liveLessonsshow');
@@ -233,13 +249,29 @@ $router->group(['middleware' => 'auth.role:staff,student,superadmin,admin,teache
      $router->get('grades/{grade}', 'Globle\GradeController@show'); // GET /grades/{grade}
 
      $router->get('student-subjects', 'SubjectController@studentSubject');
+     $router->get('student-subjects-term', 'SubjectController@studentSubjectTerm');
+
+     $router->get('student-certificate', 'CertificateController@index');
+     $router->post('student-certificate-upload', 'CertificateController@studentCertificateUpload');
 
      $router->get('note-paper-list', 'ClassNoteController@studentNoteList');
      $router->get('note-paper-count', 'ClassNoteController@studentNoteCount');
      $router->post('note-paper-list', 'ClassNoteController@studentNoteStore');
      $router->post('class-note-paper-upload', 'ClassNoteController@studentNotePaperUpload');
 
+
+     $router->post('term-test-upload', 'StudenttermPaperController@studentTermPaperUpload');
+
      $router->get('class-paper', 'ClassPaperController@ClassPaper');
+
+
+     $router->get('student-subjects-get', 'StudentSubjectController@studentSubjectGet');
+     $router->post('remove-subject', 'StudentSubjectController@studentSubjectRemove');
+     $router->post('add-subject', 'StudentSubjectController@studentSubjectAdd');
+
+
+     $router->get('student-reviwe-teacher', 'StudentReviewController@studentReviewTeacher');
+     $router->post('student-bank-payment', 'PaymentController@studentBankPayment');
 
 
 
@@ -251,6 +283,9 @@ $router->get('subjects', 'Globle\SubjectController@index');
 $router->post('send-otp', 'Globle\SmsController@sendOtp');
 $router->post('send-sms', 'Globle\SmsController@sms');
 $router->post('register-student', 'AuthController@Studentregister');    
+
+
+
 
 $router->options('/{any:.*}', function () {
     return response('OK', 200);

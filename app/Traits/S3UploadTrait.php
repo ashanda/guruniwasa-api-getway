@@ -4,6 +4,7 @@ namespace App\Traits;
 
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 trait S3UploadTrait
 {
@@ -28,10 +29,10 @@ trait S3UploadTrait
 
         // Generate a unique file name
         $fileName = uniqid() . '_' . trim($file->getClientOriginalName());
-
+        
         // Store the file on S3
         $path = Storage::disk('s3')->putFile($folder, $file, $fileName);
-
+   
         return $path;
     }
 
