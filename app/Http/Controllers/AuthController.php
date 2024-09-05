@@ -222,6 +222,47 @@ class AuthController extends Controller
         return json_decode((string) $response->getBody(), true);
     }
 
+
+    public function Teacherregister(Request $request){
+        $tag = 'teacher-register';
+        $response = $this->callRegisterTeacherService($request->all(), $tag);
+
+        if($response['status'] == 200){
+            // Save the token in the gateway's database
+             $this->saveToken($response['data']['access_token'], $response['data']['expires_at']);
+        }
+
+        return response()->json($response);
+    }
+    
+   
+    private function callRegisterTeacherService($data,$tag)
+    {
+        // Make a request to auth-service to authenticate and get token
+        Log::info($data);
+        $user_id = 'GNU-TE-' . str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
+        $http = new Client;
+        $response = $http->post("$this->ServiceUrl/$tag", [
+                'headers' => [
+                    'API-Key' => $this->apiKey,
+                ],
+                    'form_params' => [
+                        'user_id' => $user_id,
+                        'name' => $data['name'],
+                        'grades' => $data['grades'],
+                        'address' => $data['address'],
+                        'district' => $data['district'],
+                        'town' =>$data['town'],
+                        'contact_no' => $data['contact_no'],
+                        'secondary_contact_no' => $data['secondary_contact_no'],
+                        'email' => $data['email'],
+                        'password' => $data['password'],
+                    ],
+        ]);
+       
+        return json_decode((string) $response->getBody(), true);
+    }
+
     private function callAuthService($data,$tag)
     {
         // Make a request to auth-service to authenticate and get token

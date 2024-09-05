@@ -64,4 +64,86 @@ class AttendenceController extends Controller
        
         return json_decode((string) $response->getBody(), true);
     }
+
+
+
+       public function StudentAttendances(Request $request){
+            try {
+                // Send HTTP requests
+                $response_serviceCall = $this->callServiceAttendence($request->all());
+
+                // Prepare and return the response
+                return response()->json($response_serviceCall, 200);
+
+            } catch (\Exception $exception) {
+                return response()->json([
+                    'status' => 400,
+                    'message' => $exception->getMessage(),
+                    'data' => [],
+                ], 400);
+            }
+         }
+
+         private function callServiceAttendence($data)
+        {
+            // Make a request to auth-service to authenticate and get token
+        
+            $http = new Client();
+            $response = $http->post("$this->CoreServiceUrl/attendence", [
+                    'headers' => [
+                        'API-Key' => $this->apiKey,  
+                        
+                    ],
+                    'json' => [
+                            'lesson_id' => $data['lesson_id'],
+                            'teacher_id' => $data['teacher_id'],
+                            'subject' => $data['subject'],
+                            'student_id' => $data['auth_id'],
+                            'type' => $data['type'], 
+                            'lesson_date' => $data['lesson_date'], 
+                    ],
+            ]);
+        
+            return json_decode((string) $response->getBody(), true);
+        }
+
+
+        public function StudentAttendenceData(Request $request){
+try {
+                // Send HTTP requests
+                $response_serviceCall = $this->callServiceAttendenceData($request->all());
+
+                // Prepare and return the response
+                return response()->json($response_serviceCall, 200);
+
+            } catch (\Exception $exception) {
+                return response()->json([
+                    'status' => 400,
+                    'message' => $exception->getMessage(),
+                    'data' => [],
+                ], 400);
+            }
+         }
+
+         private function callServiceAttendenceData($data)
+        {
+            // Make a request to auth-service to authenticate and get token
+        
+            $http = new Client();
+            $response = $http->get("$this->CoreServiceUrl/student-attendances-data", [
+                    'headers' => [
+                        'API-Key' => $this->apiKey,  
+                        
+                    ],
+                    'json' => [
+                            'month' => $data['month'],
+                            'teacher_id' => $data['teacher_id'],
+                            'student_id' => $data['student_id'],
+                            'subject_id' => $data['subject_id'],
+                    ],
+            ]);
+        
+            return json_decode((string) $response->getBody(), true);
+        }
+        
 }
