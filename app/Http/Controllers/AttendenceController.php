@@ -30,7 +30,7 @@ class AttendenceController extends Controller
     try {
         // Send HTTP requests
          $response_serviceCall = $this->callService($request->all(), $request->bearerToken());
-
+        
         // Prepare and return the response
         return response()->json($response_serviceCall, 200);
 

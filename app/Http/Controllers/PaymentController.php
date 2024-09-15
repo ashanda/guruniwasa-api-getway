@@ -53,6 +53,47 @@ class PaymentController extends Controller
             }
     }
 
+
+    public function studentCardPayment(Request $request){
+        try {
+            // Send HTTP requests
+                $response_serviceCall = $this->callCardService($request);
+                
+                return response()->json($response_serviceCall, 200);
+            }catch (Exception $exception) {
+                return response()->json([
+                    'status' => 400,
+                    'message' => $exception->getMessage(),
+                    'data' => [],
+                ], 400);
+            }
+        
+    }
+
+
+     private function callCardService($data)
+        {
+            Log::info($data);
+            // Make a request to auth-service to authenticate and get token
+            $payment_id = uniqid('gnu_', true);
+            $http = new Client();
+                $response = $http->post("$this->PaymentServiceUrl/student-card-payment", [
+                    'headers' => [
+                        'API-Key' => $this->apiKey,
+                    ],
+                    'json' => [
+                        'student_id' => $data['student_id'] ,
+                        'cartData' =>  $data['cartData'] ,
+                        'pay_month' => $data['pay_month'],
+                        'payment_type' => 'Card',
+                        'payment_id'=>$payment_id,
+                        'amount' => $data['amount'],
+                    ],    
+                ]);
+                
+            return json_decode((string) $response->getBody(), true);
+        } 
+
         private function bankSlipUpload($data, $filePath)
         {
             // Make a request to auth-service to authenticate and get token
@@ -439,7 +480,78 @@ class PaymentController extends Controller
                     ],
                     
             ]);
-        Log::info($response->getBody());
+        
+            return json_decode((string) $response->getBody(), true);
+        }
+
+       public function PaymentHistorySearch(Request $request){
+            try {
+                // Send HTTP requests
+                
+                $response_serviceCall = $this->callAllPaymentSearch($request, $request->bearerToken());
+                $data = collect($response_serviceCall['data']);
+                $groupedPayments = $data->groupBy('payment_id');
+
+                $groupedPayments->transform(function ($payments) {
+                    // Assume student data is the same for each group, so fetch it only once
+                    $student_id = $payments->first()['student_id'];
+                    
+                    $studentData = $this->getStudentData($student_id); // Call user-service to get student data
+                    
+                    return $payments->map(function ($payment) use ($studentData) {
+                        // Fetch subject, grade, and teacher details for each payment
+                        
+                        $subjectData = $this->getSubjectData($payment['subject_id']);
+                        
+                        $gradeData = $this->getGradeData($payment['grade_id']);
+                       
+                        $teacherData = $this->getTeacherData($payment['teacher_id']); // Call user-service for teacher data
+                       
+                        
+                        // Append additional data to each payment
+                        return array_merge($payment, [
+                            'student' => $studentData,
+                            'subject' => $subjectData,
+                            'grade' => $gradeData,
+                            'teacher' => $teacherData
+                        ]);
+                    });
+                });
+
+                $response = [
+                    'status' => 200,
+                    'message' => 'Pending payment retrieved successfully',
+                    'data' => $groupedPayments
+                ];
+
+                return response()->json($response, 200);
+
+            } catch (Exception $exception) {
+                return response()->json([
+                    'status' => 400,
+                    'message' => $exception->getMessage(),
+                    'data' => [],
+                ], 400);
+            }
+       }
+
+       private function callAllPaymentSearch($data,$accessToken)
+        {
+            // Make a request to auth-service to authenticate and get token
+            
+            $http = new Client();
+            $response = $http->get("$this->PaymentServiceUrl/payment-history-search", [
+                    'headers' => [
+                        'API-Key' => $this->apiKey,
+                        'Authorization' => $accessToken ? 'Bearer ' . $accessToken : null,  
+                    ],
+                    'json' => [
+                        'month' => $data['month'] ,
+                        'payment_type' => $data['payment_method'] , 
+                    ],
+                    
+            ]);
+        
             return json_decode((string) $response->getBody(), true);
         }
 

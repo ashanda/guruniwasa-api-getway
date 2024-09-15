@@ -272,6 +272,10 @@ $router->group(['middleware' => 'auth.role:staff,student,superadmin,admin,teache
 
      $router->get('student-reviwe-teacher', 'StudentReviewController@studentReviewTeacher');
      $router->post('student-bank-payment', 'PaymentController@studentBankPayment');
+    $router->post('student-card-payment', 'PaymentController@studentCardPayment');
+
+
+    $router->post('payment-history-search', 'PaymentController@PaymentHistorySearch');
 
 
 
