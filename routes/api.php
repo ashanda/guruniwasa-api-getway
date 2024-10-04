@@ -223,6 +223,8 @@ $router->group(['middleware' => 'auth.role:staff,superadmin,admin,teacher'], fun
 });
 $router->group(['middleware' => 'auth.role:staff,superadmin,admin'], function () use ($router) {
 $router->get('payment-history', 'PaymentController@StudentPaymentHistory');
+$router->get('student-payment-history', 'PaymentController@SingleStudentPaymentHistory');
+
 
 $router->get('payment-bank-history', 'PaymentController@StudentBankPaymentHistory');
 
@@ -231,6 +233,39 @@ $router->get('approved-payments', 'PaymentController@StudentapprovedPayment');
 
 $router->post('approve-payment', 'PaymentController@approvePayment');
 $router->post('reject-payment', 'PaymentController@rejectPayment');
+
+$router->get('intro-student', 'IntroVideoController@student');
+$router->get('intro-teacher', 'IntroVideoController@teacher');
+$router->get('intro-staff', 'IntroVideoController@staff');
+$router->get('intro-admin', 'IntroVideoController@admin');
+$router->post('create_subject', 'Globle\SubjectController@create');
+$router->post('update_subject', 'Globle\SubjectController@update');
+$router->post('delete_subject', 'Globle\SubjectController@destroy');
+
+$router->get('class-issues', 'ClassIssuesController@index');
+$router->get('video-issues', 'ClassIssuesController@Videoindex');
+
+$router->post('class-remark', 'ClassIssuesController@remark');
+$router->post('video-remark', 'ClassIssuesController@Videoremark');
+
+$router->post('intro-video-teacher','TeacherIntroController@teacherIntro');
+
+$router->get('item-categories-index','IteamShopController@itemCategoriesIndex');
+$router->post('item-categories-store','IteamShopController@itemCategoriesStore');
+$router->post('item-categories-update','IteamShopController@itemCategoriesUpdate');
+$router->post('item-categories-delete','IteamShopController@itemCategoriesDelete');
+
+$router->get('all-staff','UserController@allStaff');
+
+$router->get('item-index','IteamShopController@Index');
+$router->post('item_store','IteamShopController@Store');
+$router->post('item_update','IteamShopController@Update');
+$router->post('item_delete','IteamShopController@iDelete');
+
+
+
+
+
 
 });
 
@@ -268,14 +303,37 @@ $router->group(['middleware' => 'auth.role:staff,student,superadmin,admin,teache
      $router->get('student-subjects-get', 'StudentSubjectController@studentSubjectGet');
      $router->post('remove-subject', 'StudentSubjectController@studentSubjectRemove');
      $router->post('add-subject', 'StudentSubjectController@studentSubjectAdd');
+     $router->get('grade_wise_subjects', 'Globle\SubjectController@GradeWiseSubjects');
+
 
 
      $router->get('student-reviwe-teacher', 'StudentReviewController@studentReviewTeacher');
      $router->post('student-bank-payment', 'PaymentController@studentBankPayment');
+    
+    $router->post('manual-payment', 'PaymentController@studentManualPayment');
+
     $router->post('student-card-payment', 'PaymentController@studentCardPayment');
 
 
     $router->post('payment-history-search', 'PaymentController@PaymentHistorySearch');
+    $router->get('students-search', 'SearchController@StudentSearch');
+    $router->get('single-student', 'SearchController@SingleStudent');
+    $router->get('all-student', 'SearchController@AllStudent');
+
+    $router->get('all-teacher', 'SearchController@AllTeacher');
+
+
+    $router->get('single-teacher', 'SearchController@SingleTeacher');
+    
+
+    $router->post('/create_grade', 'Globle\GradeController@store');
+    $router->post('/update_grade', 'Globle\GradeController@update');
+    $router->post('/remove_grade','Globle\GradeController@destroy');
+
+    
+    
+
+
 
 
 

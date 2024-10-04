@@ -52,9 +52,9 @@ class GradeController extends Controller
             }
 
             $method = 'post';
-            $slug = 'grades';
+            $slug = 'store_grade';
             $response = $this->callService($request->all(), $method, $slug);
-            return response()->json($response, 201);
+            return response()->json($response, 200);
         } catch (Exception $exception) {
             return response()->json(['error' => $exception->getMessage()], 400);
         }
@@ -84,11 +84,12 @@ class GradeController extends Controller
         }
     }
 
-    public function update(Request $request, $grade)
+    public function update(Request $request)
     {
  
         try {
             $validator = Validator::make($request->all(), [
+                'grade_id' => 'required',
                 'gname' => 'required',
             ]);
 
@@ -96,8 +97,8 @@ class GradeController extends Controller
                 return response()->json(['errors' => $validator->errors()], 400);
             }
 
-            $method = 'put';
-            $slug = "grades/{$grade}";
+            $method = 'post';
+            $slug = "update_grade";
             $response = $this->callService($request->all(), $method, $slug);
             return response()->json($response, 200);
         } catch (Exception $exception) {
@@ -105,12 +106,12 @@ class GradeController extends Controller
         }
     }
 
-    public function destroy($grade)
+    public function destroy(Request $request)
     {
         try {
-            $method = 'delete';
-            $slug = "grades/{$grade}";
-            $response = $this->callService([], $method, $slug);
+            $method = 'post';
+            $slug = "remove_grade";
+            $response = $this->callService($request->all(), $method, $slug);
             return response()->json($response, 200);
         } catch (Exception $exception) {
             return response()->json(['error' => $exception->getMessage()], 400);

@@ -73,7 +73,7 @@ class PaymentController extends Controller
 
      private function callCardService($data)
         {
-            Log::info($data);
+           // Log::info($data);
             // Make a request to auth-service to authenticate and get token
             $payment_id = uniqid('gnu_', true);
             $http = new Client();
@@ -555,4 +555,126 @@ class PaymentController extends Controller
             return json_decode((string) $response->getBody(), true);
         }
 
-}
+
+
+        public function SingleStudentPaymentHistory(Request $request){
+            
+                try {
+                // Send HTTP requests
+                $response_serviceCall = $this->callSingleStudentHistoryPayment($request, $request->bearerToken());
+                
+                $data = collect($response_serviceCall['data']);
+                $groupedPayments = $data->groupBy('payment_id');
+                    
+                $groupedPayments->transform(function ($payments) {
+                    // Assume student data is the same for each group, so fetch it only once
+                    $student_id = $payments->first()['student_id'];
+                    
+                    $studentData = $this->getStudentData($student_id); // Call user-service to get student data
+                    
+                    return $payments->map(function ($payment) use ($studentData) {
+                        // Fetch subject, grade, and teacher details for each payment
+                        
+                        $subjectData = $this->getSubjectData($payment['subject_id']);
+                        
+                        $gradeData = $this->getGradeData($payment['grade_id']);
+                       
+                        $teacherData = $this->getTeacherData($payment['teacher_id']); // Call user-service for teacher data
+                       
+                        
+                        // Append additional data to each payment
+                        return array_merge($payment, [
+                            'student' => $studentData,
+                            'subject' => $subjectData,
+                            'grade' => $gradeData,
+                            'teacher' => $teacherData
+                        ]);
+                    });
+                });
+
+                $response = [
+                    'status' => 200,
+                    'message' => 'Pending payment retrieved successfully',
+                    'data' => $groupedPayments
+                ];
+
+                return response()->json($response, 200);
+
+            } catch (Exception $exception) {
+                return response()->json([
+                    'status' => 400,
+                    'message' => $exception->getMessage(),
+                    'data' => [],
+                ], 400);
+            }
+        }  
+        
+        private function callSingleStudentHistoryPayment($data,$accessToken)
+        {
+            // Make a request to auth-service to authenticate and get token
+        
+            $http = new Client();
+            $response = $http->get("$this->PaymentServiceUrl/single-student-payment-history", [
+                    'headers' => [
+                        'API-Key' => $this->apiKey,
+                        'Authorization' => $accessToken ? 'Bearer ' . $accessToken : null,  
+                    ],
+                    'json' => [
+                        'student_id' => $data['student_id'] ,
+                    ],
+                    
+            ]);
+        
+            return json_decode((string) $response->getBody(), true);
+        } 
+
+
+        public function studentManualPayment(Request $request){
+
+            
+            try {
+            // Send HTTP requests
+                
+                $response_serviceCall = $this->ManualPayment($request);
+                
+                return response()->json($response_serviceCall, 200);
+            }catch (Exception $exception) {
+                return response()->json([
+                    'status' => 400,
+                    'message' => $exception->getMessage(),
+                    'data' => [],
+                ], 400);
+            }
+        }
+
+
+        private function ManualPayment($data)
+        {
+            // Make a request to auth-service to authenticate and get token
+            $payment_id = uniqid('gnu_', true);
+            $http = new Client();
+                $response = $http->post("$this->PaymentServiceUrl/student-manual-payment", [
+                    'headers' => [
+                        'API-Key' => $this->apiKey,
+                    ],
+                    'json' => [
+                        'logged_user' => $data['logged_user'] ,
+                        'student_id' => $data['student_id'] ,
+                        'dateTime' => $data['dateTime'] ,
+                        'cartData' =>  $data['cartData'] ,
+                        'pay_month' => $data['pay_month'],
+                        'payment_type' => 'Manual',
+                        'payment_id'=>$payment_id,
+
+
+                    ],    
+                ]);
+                
+            return json_decode((string) $response->getBody(), true);
+        }
+
+
+
+    }
+
+
